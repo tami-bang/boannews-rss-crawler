@@ -1,42 +1,67 @@
-# logging_config.py
 import logging
 from logging.handlers import TimedRotatingFileHandler
 import os
+from typing import Literal
 
-def setup_logging(log_path: str="logs/app.log") -> None:
-    """로깅 설정 모듈
-        매개변수로 로그파일 경로가 주어지면 주어진 경로로,
-        주어지지 않으면 logs/app.log 에 로깅 하도록 설정.
-        - 매일 자정 새로운 로그파일 생성. (전날 로그는 app.log.yyyymmdd 파일로 저장 됨)
-        - 14 일 경과한 파일은 자동 삭제        
+def setup_logging(
+    log_path: str = "logs/app.log",
+    mode: Literal["dev", "prod"] = "dev"
+) -> None:
+    """
+    로깅 설정
+    - 로그파일 경로가 주어지면 해당 경로 사용
+    - 매일 자정 새로운 로그파일 생성, 이전 로그는 날짜별로 백업
+    - 14일 경과한 로그 자동 삭제
+    - 개발 모드(dev) → 콘솔에도 DEBUG 출력
+    - 운영 모드(prod) → 콘솔에는 WARNING 이상만 출력
 
     Args:
-        log_path (str, optional): _description_. Defaults to "logs/app.log".
+        log_path (str): 로그 파일 경로
+        mode (Literal["dev","prod"]): 개발/운영 모드
     """
+    
     # logs 폴더 없으면 생성
+ 
     os.makedirs(os.path.dirname(log_path), exist_ok=True)
 
     root = logging.getLogger()
-    root.setLevel(logging.DEBUG)    # 개발 서버는 INFO / 운영 서버는 ERROR 레벨 권장.
+    root.setLevel(logging.DEBUG)  # 파일은 DEBUG 이상 기록
+
+    if root.handlers:
+        return  # 중복 핸들러 방지
     
-    if root.handlers :
-        return
-    
-    handler = TimedRotatingFileHandler(
+    # 파일 핸들러: DEBUG~ERROR 모두 기록, 하루 단위 회전, 14일 보관
+    file_handler = TimedRotatingFileHandler(
         log_path,
-        when = "midnight",
-        interval = 1,
-        backupCount = 14,
-        encoding = "utf-8",
-        utc = False        
+        when="midnight",
+        interval=1,
+        backupCount=14,
+        encoding="utf-8",
+        utc=False
     )
-    
-    fmt = logging.Formatter(
+    file_fmt = logging.Formatter(
         "%(asctime)s [%(levelname)s] %(name)s : %(lineno)d - %(message)s"
     )
-    
-    handler.setFormatter(fmt)
-    root.addHandler(handler)
-    # logs 폴더 자동 생성 기능 추가
-    # 백업 파일 14일 유지, 매일 자정 새로운 파일 생성
-    # 필요하면 level을 운영/개발 모드에 맞게 변경
+    file_handler.setFormatter(file_fmt)
+    file_handler.setLevel(logging.DEBUG)    # DEBUG 이상 모두 기록
+    root.addHandler(file_handler)
+
+    # 콘솔 핸들러
+    class ConsoleFilter(logging.Filter):
+        def filter(self, record: logging.LogRecord) -> bool:
+            if mode == "dev":
+                # 개발 모드: DEBUG와 WARNING 이상 출력
+                return record.levelno == logging.DEBUG or record.levelno >= logging.WARNING
+            else:
+                # 운영 모드: WARNING 이상만 출력
+                return record.levelno >= logging.WARNING
+
+    console_handler = logging.StreamHandler()
+    console_fmt = logging.Formatter(
+        "%(asctime)s [%(levelname)s] %(name)s : %(message)s"
+    )
+    console_handler.setFormatter(console_fmt)
+    console_handler.addFilter(ConsoleFilter())
+    root.addHandler(console_handler)
+
+    root.info("로깅 설정 완료. 로그 파일: %s, 모드: %s", log_path, mode)

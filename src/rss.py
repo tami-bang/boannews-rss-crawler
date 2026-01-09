@@ -17,13 +17,13 @@ from .db import get_connection, save_article
 warnings.filterwarnings("ignore", category=XMLParsedAsHTMLWarning)
 
 def make_session() -> requests.Session:
-    """재시도 기능이 있는 세션 생성"""
+    """재시도 기능이 있는 requests 세션 생성"""
     session = requests.Session()
     retries = Retry(
         total=3,
         backoff_factor=1,
-        status_forcelist=[500, 502, 503, 504],
-        allowed_methods=frozenset(['GET', 'POST'])
+        status_forcelist=[500,502,503,504],
+        allowed_methods=frozenset(['GET','POST'])
     )
     adapter = HTTPAdapter(max_retries=retries)
     session.mount("http://", adapter)
@@ -43,23 +43,22 @@ def find_full_rss_url(index_url: str, session: requests.Session) -> str:
             if val and val.lower().endswith(".xml") and "rss" in val.lower():
                 logging.info(f"RSS URL 발견: {val}")
                 return val
-        logging.warning("RSS XML 링크를 찾지 못했습니다. URL 그대로 사용 시도")
-        return index_url  # 실패 시 index_url 그대로 사용
+        logging.warning("RSS XML 링크를 찾지 못했습니다. URL 그대로 사용")
+        return index_url
     except requests.RequestException as e:
         logging.exception(f"RSS URL 요청 실패: {e}")
-        return index_url  # 요청 실패 시 index_url 그대로 사용
+        return index_url
 
-def parse_rss(rss_url: str):
+def parse_rss(rss_url: str) -> feedparser.FeedParserDict:
     """feedparser로 RSS 파싱"""
     feed = feedparser.parse(rss_url, agent="Mozilla/5.0")
     if feed.bozo:
         logging.warning(f"RSS 파싱 경고: {feed.bozo_exception}")
     return feed
 
-def fetch_entries(index_url: str, conn=None) -> List:
+def fetch_entries(index_url: str, conn=None) -> List[dict]:
     """RSS 읽고 DB 저장까지 처리"""
     session = make_session()
-    # conn 없으면 새로 연결
     close_conn = False
     if conn is None:
         conn = get_connection()
@@ -88,7 +87,7 @@ def fetch_entries(index_url: str, conn=None) -> List:
             if conn:
                 save_article(conn, article)
         return feed.entries
-    except Exception as e:
+    except Exception:
         logging.exception("RSS 수집 중 오류 발생")
         return []
     finally:
