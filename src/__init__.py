@@ -8,7 +8,7 @@ RSS URL 검색 + RSS 파싱 + feed 반환
 """
 
 # src/__init__.py
-from .rss import fetch_entries
+from .rss import fetch_all_entries 
 
 __all__ = ["fetch_entries"]
 __version__ = "1.0.0"
