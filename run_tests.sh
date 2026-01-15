@@ -25,6 +25,9 @@ export TEST_MODE=${MODE^^}  # FAST 또는 FULL
 
 echo "=== Test Mode: $MODE ==="
 
+# 프로젝트 루트를 PYTHONPATH에 추가
+export PYTHONPATH=$(pwd):$PYTHONPATH
+
 # ------------------------------
 # 2. pytest 명령어 설정
 # ------------------------------

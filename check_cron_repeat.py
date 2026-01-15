@@ -107,9 +107,9 @@ def run_repeat_mode(repeat=3, delay_sec=10):
     """
     for i in range(repeat):
         print(f"\n========== 반복 테스트 {i+1}/{repeat} ==========")
-        print("1️⃣ CRON 작업 실행 중 (아카이브 + RSS 수집)...")
+        print("1) CRON 작업 실행 중 (아카이브 + RSS 수집)...")
         run_cron_job()
-        print("2️⃣ DB 상태 확인 중...")
+        print("2) DB 상태 확인 중...")
         check_db_summary()
         if i < repeat - 1:
             print(f"⏱ {delay_sec}초 대기 후 다음 반복 실행")
