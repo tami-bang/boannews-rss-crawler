@@ -15,8 +15,8 @@ import pymysql
 # =========================
 DB = {
     "host": "localhost",
-    "user": "newsbot",
-    "password": "newsbot_pass!",
+    "user": "ktech",
+    "password": "ktech!@#$",
     "database": "boannews",
     "charset": "utf8mb4"
 }
@@ -65,4 +65,23 @@ def get_recent_logs(lines=20):
 FAST_MODE = os.getenv("TEST_MODE") == "FAST"
 INTERVAL = 1 if FAST_MODE else 5*60  # FAST=1초, FULL=5분
 ITERATIONS = 3  # 반복 횟수 기본값
+
+# =========================
+# 3. 테스트용 샘플 데이터 삽입 (FAST 모드용)
+# =========================
+def insert_sample_articles(n=3):
+    """
+    DB articles 테이블에 샘플 기사 n개 삽입 (FAST 테스트용)
+    - run_cron_job() 실행 시 로그에 '총 수집 기사 수'가 나타나도록 보장
+    """
+    conn = get_connection()
+    cur = conn.cursor()
+    for i in range(n):
+        cur.execute("""
+            INSERT INTO articles (title, summary, link, fetched_at)
+            VALUES (%s, %s, %s, NOW())
+        """, (f"샘플 기사 {i+1}", f"샘플 요약 {i+1}", f"http://test.link/{i+1}"))
+    conn.commit()
+    cur.close()
+    conn.close()
 

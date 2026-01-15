@@ -32,12 +32,12 @@ def test_cron_simulation(iteration):
     if duplicates:
         print(f"WARNING: articles_old 중복 링크 존재! {duplicates}")
     else:
-        print("중복 링크 없음 ✅")
+        print("중복 링크 없음")
 
     # 5. 로그 확인
     logs = get_recent_logs()
     if any("아카이브" in line or "총 수집 기사 수" in line for line in logs):
-        print("최근 로그에 아카이브 및 수집 기록 확인 ✅")
+        print("최근 로그에 아카이브 및 수집 기록 확인")
     else:
         print("WARNING: 최근 로그에 아카이브 및 수집 기록 없음")
 

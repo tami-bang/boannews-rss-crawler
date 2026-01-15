@@ -24,7 +24,7 @@ def test_archive_and_duplicates():
     if duplicates:
         print(f"WARNING: articles_old 중복 링크 존재! {duplicates}")
     else:
-        print("중복 링크 없음 ✅")
+        print("중복 링크 없음")
 
     # 원본 articles 확인 (삭제되었더라도 음수 방지)
     assert original_count >= 0, "articles 삭제 오류"
