@@ -129,7 +129,7 @@ else:
         news_list = articles_by_category.get(cat, [])
         if not news_list:
             continue
-        body += f"■ {cat} ■\n"
+        body += f" {cat} \n"
         for i, (title, summary) in enumerate(news_list, 1):
             body += f"{i}. {clean_text(title)}\n"
             body += f"   - {clean_text(summary)}\n"
@@ -147,7 +147,7 @@ proc = subprocess.Popen(
 )
 proc.communicate(body)
 
-print(f"메일 발송 완료 ✅ 총 기사 수: {total_articles}")
+print(f"메일 발송 완료! 총 기사 수: {total_articles}")
 if total_articles == 0:
     print("※ 오늘 수집된 기사가 없습니다.")
 

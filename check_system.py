@@ -61,7 +61,7 @@ def check_articles(start, end):
     return count, sample
 
 # =========================
-# 1️⃣ 오늘 수집 기사 확인
+# 1. 오늘 수집 기사 확인
 # =========================
 today_count, today_sample = check_articles(today_start, today_start + timedelta(days=1))
 print(f"[오늘 수집 기사] 총 {today_count}건")
@@ -69,7 +69,7 @@ for t, c in today_sample:
     print(f"  - ({c}) {t}")
 
 # =========================
-# 2️⃣ 어제 수집 기사 확인
+# 2. 어제 수집 기사 확인
 # =========================
 yesterday_count, yesterday_sample = check_articles(yesterday_start, yesterday_end)
 print(f"\n[어제 수집 기사] 총 {yesterday_count}건")
@@ -77,7 +77,7 @@ for t, c in yesterday_sample:
     print(f"  - ({c}) {t}")
 
 # =========================
-# 3️⃣ 로그 최근 10줄
+# 3. 로그 최근 10줄
 # =========================
 if os.path.exists(LOG_FILE):
     print(f"\n[최근 로그 10줄] ({LOG_FILE})")
@@ -89,7 +89,7 @@ else:
     print(f"\n로그 파일이 존재하지 않습니다: {LOG_FILE}")
 
 # =========================
-# 4️⃣ 테스트 메일 발송
+# 4. 테스트 메일 발송
 # =========================
 TEST_BODY = f"뉴스 크롤러 시스템 테스트\n오늘 기사 수: {today_count}\n어제 기사 수: {yesterday_count}\n"
 TEST_SUBJECT = f"[news_crawler TEST] {datetime.now().date()} 수집 확인"

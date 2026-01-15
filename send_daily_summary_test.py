@@ -12,7 +12,7 @@ from datetime import datetime, timedelta
 import re
 
 # =========================
-# 1️⃣ DB 접속 정보
+# 1. DB 접속 정보
 # =========================
 DB = {
     "host": "localhost",
@@ -23,7 +23,7 @@ DB = {
 }
 
 # =========================
-# 2️⃣ RSS URL → 카테고리 이름 매핑
+# 2. RSS URL → 카테고리 이름 매핑
 # =========================
 CATEGORY_MAP = {
     "http://www.boannews.com/media/news_rss.xml?mkind=1": "SECURITY",
@@ -46,14 +46,14 @@ CATEGORY_MAP = {
 CATEGORY_ORDER = ["전체기사"] + list(CATEGORY_MAP.values())
 
 # =========================
-# 3️⃣ 시간 범위 (어제)
+# 3. 시간 범위 (어제)
 # =========================
 yesterday = datetime.now() - timedelta(days=1)
 start_dt = datetime.combine(yesterday.date(), datetime.min.time())
 end_dt = start_dt + timedelta(days=1)
 
 # =========================
-# 4️⃣ DB 연결 및 조회
+# 4. DB 연결 및 조회
 # =========================
 conn = pymysql.connect(**DB)
 cur = conn.cursor()
@@ -85,7 +85,7 @@ cur.close()
 conn.close()
 
 # =========================
-# 5️⃣ HTML 제거 + None 처리
+# 5. HTML 제거 + None 처리
 # =========================
 def clean_text(text):
     if not text:
@@ -95,7 +95,7 @@ def clean_text(text):
     return text
 
 # =========================
-# 6️⃣ 본문 구성 및 출력
+# 6. 본문 구성 및 출력
 # =========================
 total_articles = sum(len(v) for v in articles_by_category.values())
 if total_articles == 0:
@@ -107,7 +107,7 @@ else:
         if not news_list:
             continue
 
-        body += f"■ {cat} ■\n"
+        body += f" {cat} \n"
         for i, (title, summary) in enumerate(news_list, 1):
             body += f"{i}. {clean_text(title)}\n"
             body += f"   - {clean_text(summary)}\n"
