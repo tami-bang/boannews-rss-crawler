@@ -7,11 +7,11 @@ def get_connection():
     """MariaDB 연결 후 connection 반환"""
     try:
         conn = mysql.connector.connect(
-            host='192.168.1.24',      # MariaDB 서버 주소
-            #host='잘못된 주소',          # DB 연결 실패 테스트
-            user='ktech',              # DB 사용자
-            password='ktech!@#$',      # DB 비밀번호
-            database='boannews'        # 사용할 DB
+            host=os.getenv("DB_HOST"),               # MariaDB 서버 주소
+            #host='잘못된 주소',                     # DB 연결 실패 테스트
+            user=os.getenv("DB_USER"),              # DB 사용자
+            password=os.getenv("DB_PASSWORD"),       # DB 비밀번호
+            database=os.getenv("DB_NAME")            # 사용할 DB
         )
         return conn
     except Error as e:
