@@ -48,9 +48,9 @@ CATEGORY_ORDER = ["전체기사"] + list(CATEGORY_MAP.values())
 # =========================
 # 3. 시간 범위 (어제)
 # =========================
-yesterday = datetime.now() - timedelta(days=1)
-start_dt = datetime.combine(yesterday.date(), datetime.min.time())
-end_dt = start_dt + timedelta(days=1)
+today = datetime.now().date()
+start_dt = datetime.combine(today - timedelta(days=1), datetime.min.time())
+end_dt = datetime.combine(today, datetime.min.time())
 
 # =========================
 # 4. DB 연결 및 조회
@@ -116,5 +116,5 @@ else:
 print(body)
 print(f"총 기사 수: {total_articles}")
 if total_articles == 0:
-    print("※ 오늘 수집된 기사가 없습니다.")
+    print("※ 어제 수집된 기사가 없습니다.")
 
