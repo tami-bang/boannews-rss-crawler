@@ -1,7 +1,10 @@
 """프로그램 실행 진입점, 각 모듈 연계. DB 연결, 테이블 구조, CRUD"""
 # src/db.py
+import os
 import mysql.connector
 from mysql.connector import Error
+from dotenv import load_dotenv
+load_dotenv()   # .env 파일 로드
 
 def get_connection():
     """MariaDB 연결 후 connection 반환"""
