@@ -4,12 +4,20 @@
 # - 집계 범위: 어제 06:00 ~ 오늘 06:00
 # - 발송 시각: 매일 06:00 (cron)
 # - 제목 자체에 링크 포함 (HTML 메일)
+# - cron 로그에 실행 시간 표시
 # ============================================================
 
 import pymysql
 import subprocess
 from datetime import datetime, timedelta
 import re
+
+# =========================
+# 로그 출력 함수
+# =========================
+def log(msg):
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    print(f"[{now}] {msg}")
 
 # =========================
 # 1. DB 접속 정보
@@ -51,8 +59,7 @@ CATEGORY_ORDER = ["전체기사"] + list(CATEGORY_MAP.values())
 today = datetime.now().date()
 start_dt = datetime.combine(today - timedelta(days=1), datetime.min.time()) + timedelta(hours=6)
 end_dt   = datetime.combine(today, datetime.min.time()) + timedelta(hours=6)
-
-print(f"[INFO] 집계 범위: {start_dt} ~ {end_dt}")
+log(f"집계 범위: {start_dt} ~ {end_dt}")
 
 # =========================
 # 4. DB 연결
@@ -155,7 +162,7 @@ proc = subprocess.Popen(
 )
 proc.communicate(mail_body)
 
-print(f"[INFO] 메일 발송 완료 (총 {total_articles}건)")
+log(f"메일 발송 완료 (총 {total_articles}건)")
 if total_articles == 0:
-    print("[WARN] 수집된 기사가 없습니다.")
+    log("수집된 기사가 없습니다.")
 
